@@ -1,17 +1,14 @@
-#ifndef SHELL_H
+#indef SHELL_H
 #define SHELL_H
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 
 extern char **environ;
 
-#define PROMPT "($) "
+void prompt(void);
+void execute(char *command);
 
-int run_shell(const char *shell_name);
 
-#endif /* SHELL_H */
+#endif
