@@ -6,11 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
-<<<<<<< HEAD
-#include <string.h>
-=======
 #include <errno.h>
->>>>>>> origin/main
 
 extern char **environ;
 
