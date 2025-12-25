@@ -4,24 +4,20 @@
 extern char **environ;
 
 /**
- * shell_loop - main shell loop
- * @name: program name
+ * shell_loop - Main loop of the shell
+ * @name: Program name
  */
 void shell_loop(char *name)
 {
-char *line;
-size_t len;
+char *line = NULL;
+size_t len = 0;
 ssize_t read;
 pid_t pid;
 int status;
-int interactive;
+int interactive = isatty(STDIN_FILENO);
 char *args[100];
 int i;
 char *token;
-
-line = NULL;
-len = 0;
-interactive = isatty(STDIN_FILENO);
 
 while (1)
 {
@@ -32,26 +28,24 @@ read = getline(&line, &len, stdin);
 if (read == -1)
 break;
 
- if (read > 0 && line[read - 1] == '\n')
-   line[read - 1] = '\0';
+if (read > 0 && line[read - 1] == '\n')
+line[read - 1] = '\0';
 
- i = 0;
- token = strtok(line, " \t");
- while (token != NULL && i < 99)
-   {
-     args[i] = token;
-     i++;
-     token = strtok(NULL, " \t");
-   }
- args[i] = NULL;
+i = 0;
+token = strtok(line, " \t");
+while (token && i < 99)
+{
+args[i++] = token;
+token = strtok(NULL, " \t");
+}
+args[i] = NULL;
 
- if (args[0] == NULL)
-   continue;
+if (!args[0])
+continue;
 
 pid = fork();
 if (pid == 0)
 {
-
 execve(args[0], args, environ);
 perror(name);
 exit(EXIT_FAILURE);
