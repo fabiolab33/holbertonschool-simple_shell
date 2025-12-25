@@ -1,1 +1,31 @@
-hi
+.TH SIMPLE_SHELL 1 "Simple Shell" "Holberton School"
+.SH NAME
+simple_shell \- a simple UNIX command line interpreter
+.SH SYNOPSIS
+.B simple_shell
+.SH DESCRIPTION
+Simple Shell is a basic UNIX command line interpreter written in C.
+It displays a prompt, waits for the user to enter a command, and executes
+the command using the execve system call.
+
+The shell works in both interactive and non-interactive modes and handles
+errors when commands cannot be executed.
+
+.SH FEATURES
+- Displays a prompt and waits for user input
+- Executes commands with arguments
+- Handles end of file (Ctrl+D)
+- Works in interactive and non-interactive modes
+- Error handling for invalid commands
+
+.SH USAGE
+Interactive mode:
+.PP
+./shell
+.PP
+Non-interactive mode:
+.PP
+echo "/bin/ls" | ./shell
+
+.SH AUTHORS
+Alexander Roman & Fabiola Burgos
