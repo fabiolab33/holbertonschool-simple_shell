@@ -2,3 +2,6 @@ hsh
 *~
 #*#
 *.save
+
+# binaries
+hsh
