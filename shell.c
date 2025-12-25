@@ -1,7 +1,5 @@
 #include "shell.h"
-
-#define PROMPT "#cisfun$ "
-#define MAX_ARGS 64
+#define PROMPT "$ "
 
 /**
  * build_args - split a line into tokens (argv) by spaces/tabs
@@ -23,6 +21,49 @@ static int build_args(char *line, char **args)
 	}
 	args[i] = NULL;
 	return (i);
+}
+
+/**
+ * execute_command - Execute a command with arguments
+ * @args: Array of command arguments (NULL-terminated)
+ * @name: Program name (argv[0]) for error messages
+ * @line_number: Current line number for error messages
+ *
+ * Return: Exit status of command
+ */
+int execute_command(char **args, char *name, unsigned int line_number)
+{
+	pid_t pid;
+	int status;
+
+	if (args == NULL || args[0] == NULL)
+		return (0);
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return (1);
+	}
+	else if (pid == 0)
+	{
+		/* Child process: execute the command */
+		if (execve(args[0], args, environ) == -1)
+		{
+			fprintf(stderr, "%s: %u: %s: not found\n",
+				name, line_number, args[0]);
+			exit(127);
+		}
+	}
+	else
+	{
+		/* Parent process: wait for child to complete */
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			return (WEXITSTATUS(status));
+	}
+
+	return (0);
 }
 
 /**

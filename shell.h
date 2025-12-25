@@ -2,18 +2,19 @@
 #define SHELL_H
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
+#include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 extern char **environ;
 
-/* main shell loop */
-int shell_loop(char *name);
+#define MAX_ARGS 128
 
-/* command execution */
-int execute_command(char **args, char *shell_name, unsigned int line_number);
+/* Function prototypes */
+int shell_loop(char *name);
+int execute_command(char **args, char *name, unsigned int line_number);
 
 #endif /* SHELL_H */

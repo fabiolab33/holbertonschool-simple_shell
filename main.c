@@ -1,18 +1,15 @@
 #include "shell.h"
 
 /**
- * main - Entry point for the shell
- * @argc: Argument count (unused)
+ * main - Entry point for simple shell
+ * @argc: Argument count
  * @argv: Argument vector
  *
- * Return: exit status of the shell
+ * Return: Exit status from shell_loop
  */
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-	int status;
-
 	(void)argc;
 
-	status = shell_loop(argv[0]);
-	return (status);
+	return (shell_loop(argv[0]));
 }
