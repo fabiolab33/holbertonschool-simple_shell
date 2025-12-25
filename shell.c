@@ -1,12 +1,35 @@
 #include "shell.h"
 
 #define PROMPT "#cisfun$ "
+#define MAX_ARGS 64
 
 /**
- * shell_loop - main loop of the shell
- * @name: argv[0] for error formatting (if needed)
+ * build_args - split a line into tokens (argv) by spaces/tabs
+ * @line: input line (will be modified)
+ * @args: output argv array
  *
- * Return: last command status
+ * Return: number of args
+ */
+static int build_args(char *line, char **args)
+{
+	int i = 0;
+	char *token;
+
+	token = strtok(line, " \t");
+	while (token != NULL && i < (MAX_ARGS - 1))
+	{
+		args[i++] = token;
+		token = strtok(NULL, " \t");
+	}
+	args[i] = NULL;
+	return (i);
+}
+
+/**
+ * shell_loop - main shell loop
+ * @name: argv[0] (shell name)
+ *
+ * Return: last command exit status
  */
 int shell_loop(char *name)
 {
@@ -19,12 +42,15 @@ int shell_loop(char *name)
 
 	while (1)
 	{
+		char *args[MAX_ARGS];
+		int argc;
+
 		if (interactive)
 			write(STDOUT_FILENO, PROMPT, sizeof(PROMPT) - 1);
 
 		nread = getline(&line, &len, stdin);
 
-		/* ✅ Ctrl + D (EOF) */
+		/* EOF (Ctrl+D) */
 		if (nread == -1)
 		{
 			if (interactive)
@@ -34,40 +60,18 @@ int shell_loop(char *name)
 
 		line_number++;
 
-		/* remove newline */
+		/* strip newline */
 		if (nread > 0 && line[nread - 1] == '\n')
 			line[nread - 1] = '\0';
 
-		/* skip leading spaces/tabs */
-		{
-			char *cmd = line;
+		/* tokenize into argv */
+		argc = build_args(line, args);
 
-			while (*cmd == ' ' || *cmd == '\t')
-				cmd++;
+		/* empty / spaces-only line */
+		if (argc == 0)
+			continue;
 
-			/* empty line */
-			if (*cmd == '\0')
-				continue;
-
-			/* stop at first whitespace to enforce "one word" */
-			{
-				char *p = cmd;
-
-				while (*p && *p != ' ' && *p != '\t')
-					p++;
-				*p = '\0';
-			}
-
-			/* build args for execve */
-			{
-				char *args[2];
-
-				args[0] = cmd;
-				args[1] = NULL;
-
-				last_status = execute_command(args, name, line_number);
-			}
-		}
+		last_status = execute_command(args, name, line_number);
 	}
 
 	free(line);

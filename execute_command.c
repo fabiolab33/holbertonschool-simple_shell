@@ -1,12 +1,12 @@
 #include "shell.h"
 
 /**
- * execute_command - Forks and executes a command (no PATH, no args)
- * @args: token array (args[0] is the command, args[1] must be NULL)
- * @shell_name: argv[0] (not required for perror)
- * @line_number: command counter (optional for formatted errors)
+ * execute_command - forks and executes a command (NO PATH searching)
+ * @args: argv array (args[0] is command, args[1..] are arguments)
+ * @shell_name: argv[0] for shell (unused here but kept for your prototype)
+ * @line_number: line counter (unused here but kept for your prototype)
  *
- * Return: exit status of child, or 1 on failure
+ * Return: child exit status, or 1 on error
  */
 int execute_command(char **args, char *shell_name, unsigned int line_number)
 {
@@ -16,7 +16,7 @@ int execute_command(char **args, char *shell_name, unsigned int line_number)
 	(void)shell_name;
 	(void)line_number;
 
-	if (!args || !args[0])
+	if (args == NULL || args[0] == NULL)
 		return (0);
 
 	pid = fork();
@@ -30,7 +30,7 @@ int execute_command(char **args, char *shell_name, unsigned int line_number)
 	{
 		execve(args[0], args, environ);
 
-		/* ✅ Print error for the COMMAND, not "./hsh" */
+		/* ✅ error must blame the command that failed */
 		perror(args[0]);
 		exit(127);
 	}
