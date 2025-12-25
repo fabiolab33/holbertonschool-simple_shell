@@ -18,7 +18,7 @@ interactive = isatty(STDIN_FILENO);
 while (1)
 {
 if (interactive)
-wirte(STDOUT_FILENO, "#cisfun$ ", 9);
+write(STDOUT_FILENO, "#cisfun$ ", 9);
 
 read = getline(&line, &len, stdin);
 if (read == -1)
@@ -29,7 +29,10 @@ line[read - 1] = '\0';
 pid = fork();
 if (pid == 0)
 {
-char *args[] = {line, NULL};
+char *args[2];
+
+args[0] = line;
+args[1] = NULL;
 
 execve(line, args, environ);
 perror(name);
