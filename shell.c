@@ -1,4 +1,7 @@
 #include "shell.h"
+#include <string.h>
+
+extern char **environ;
 
 /**
  * shell_loop - main shell loop
@@ -6,13 +9,18 @@
  */
 void shell_loop(char *name)
 {
-char *line = NULL;
-size_t len = 0;
+char *line;
+size_t len;
 ssize_t read;
 pid_t pid;
 int status;
 int interactive;
+char *args[100];
+int i;
+char *token;
 
+line = NULL;
+len = 0;
 interactive = isatty(STDIN_FILENO);
 
 while (1)
@@ -24,17 +32,27 @@ read = getline(&line, &len, stdin);
 if (read == -1)
 break;
 
-line[read - 1] = '\0';
+ if (read > 0 && line[read - 1] == '\n')
+   line[read - 1] = '\0';
+
+ i = 0;
+ token = strtok(line, " \t");
+ while (token != NULL && i < 99)
+   {
+     args[i] = token;
+     i++;
+     token = strtok(NULL, " \t");
+   }
+ args[i] = NULL;
+
+ if (args[0] == NULL)
+   continue;
 
 pid = fork();
 if (pid == 0)
 {
-char *args[2];
 
-args[0] = line;
-args[1] = NULL;
-
-execve(line, args, environ);
+execve(args[0], args, environ);
 perror(name);
 exit(EXIT_FAILURE);
 }
