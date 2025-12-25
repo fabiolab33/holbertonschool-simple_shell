@@ -2,14 +2,17 @@
 
 /**
  * main - Entry point for the shell
- * @argc: Argument count (not used)
+ * @argc: Argument count (unused)
  * @argv: Argument vector
  *
- * Return: Always 0
+ * Return: exit status of the shell
  */
 int main(int argc, char **argv)
 {
-(void)argc;
-shell_loop(argv[0]);
-return (0);
+	int status;
+
+	(void)argc;
+
+	status = shell_loop(argv[0]);
+	return (status);
 }

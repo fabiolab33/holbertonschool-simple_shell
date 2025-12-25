@@ -1,59 +1,75 @@
 #include "shell.h"
-#include <string.h>
 
-extern char **environ;
+#define PROMPT "#cisfun$ "
 
 /**
- * shell_loop - Main loop of the shell
- * @name: Program name
+ * shell_loop - main loop of the shell
+ * @name: argv[0] for error formatting (if needed)
+ *
+ * Return: last command status
  */
-void shell_loop(char *name)
+int shell_loop(char *name)
 {
-char *line = NULL;
-size_t len = 0;
-ssize_t read;
-pid_t pid;
-int status;
-int interactive = isatty(STDIN_FILENO);
-char *args[100];
-int i;
-char *token;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t nread;
+	int interactive = isatty(STDIN_FILENO);
+	unsigned int line_number = 0;
+	int last_status = 0;
 
-while (1)
-{
-if (interactive)
-write(STDOUT_FILENO, "#cisfun$ ", 9);
+	while (1)
+	{
+		if (interactive)
+			write(STDOUT_FILENO, PROMPT, sizeof(PROMPT) - 1);
 
-read = getline(&line, &len, stdin);
-if (read == -1)
-break;
+		nread = getline(&line, &len, stdin);
 
-if (read > 0 && line[read - 1] == '\n')
-line[read - 1] = '\0';
+		/* ✅ Ctrl + D (EOF) */
+		if (nread == -1)
+		{
+			if (interactive)
+				write(STDOUT_FILENO, "\n", 1);
+			break;
+		}
 
-i = 0;
-token = strtok(line, " \t");
-while (token && i < 99)
-{
-args[i++] = token;
-token = strtok(NULL, " \t");
-}
-args[i] = NULL;
+		line_number++;
 
-if (!args[0])
-continue;
+		/* remove newline */
+		if (nread > 0 && line[nread - 1] == '\n')
+			line[nread - 1] = '\0';
 
-pid = fork();
-if (pid == 0)
-{
-execve(args[0], args, environ);
-perror(name);
-exit(EXIT_FAILURE);
-}
-else if (pid > 0)
-{
-wait(&status);
-}
-}
-free(line);
+		/* skip leading spaces/tabs */
+		{
+			char *cmd = line;
+
+			while (*cmd == ' ' || *cmd == '\t')
+				cmd++;
+
+			/* empty line */
+			if (*cmd == '\0')
+				continue;
+
+			/* stop at first whitespace to enforce "one word" */
+			{
+				char *p = cmd;
+
+				while (*p && *p != ' ' && *p != '\t')
+					p++;
+				*p = '\0';
+			}
+
+			/* build args for execve */
+			{
+				char *args[2];
+
+				args[0] = cmd;
+				args[1] = NULL;
+
+				last_status = execute_command(args, name, line_number);
+			}
+		}
+	}
+
+	free(line);
+	return (last_status);
 }

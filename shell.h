@@ -2,12 +2,17 @@
 #define SHELL_H
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
-#include <string.h>
 
+extern char **environ;
 
-void shell_loop(char *name);
+/* main shell loop */
+int shell_loop(char *name);
 
-#endif
+/* command execution */
+int execute_command(char **args, char *shell_name, unsigned int line_number);
+
+#endif /* SHELL_H */
