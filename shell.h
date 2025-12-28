@@ -3,11 +3,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
+extern char **environ;
 
-void shell_loop(char *name);
+#define MAX_ARGS 128
 
-#endif
+/* Function prototypes */
+int shell_loop(char *name);
+int execute_command(char **args, char *name, unsigned int line_number);
+
+#endif /* SHELL_H */
