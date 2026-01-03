@@ -16,5 +16,6 @@ extern char **environ;
 /* Function prototypes */
 int shell_loop(char *name);
 int execute_command(char **args, char *name, unsigned int line_number);
+char *get_full_path(char *command);
 
 #endif /* SHELL_H */
