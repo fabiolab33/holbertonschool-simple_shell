@@ -12,6 +12,7 @@
 extern char **environ;
 
 #define MAX_ARGS 128
+#define PATH_MAX_LEN 1024
 
 /* Function prototypes */
 int shell_loop(char *name);
