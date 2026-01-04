@@ -65,12 +65,25 @@ argc = build_args(line, args);
 if (argc == 0)
 continue;
 
-/* BULT-IN: exit */
+/* BULT-IN: exit (task 5) */
 if (strcmp(args[0], "exit") == 0)
 {
     free(line);
     exit(last_status);
 }
+
+/* BULT-IN: env (task 6) */
+if(strcmp(args[0], "env") == 0)
+{
+    char **env = environ;
+    while (*env)
+    {
+        write(STDOUT_FILENO, *env, strlen(*env));
+        write(STDOUT_FILENO, "\n", 1);
+        env++;
+    }
+    continue;
+}   
 
 last_status = execute_command(args, name, line_number);
 }
