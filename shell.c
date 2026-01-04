@@ -48,7 +48,6 @@ write(STDOUT_FILENO, PROMPT, sizeof(PROMPT) - 1);
 
 nread = getline(&line, &len, stdin);
 
-/* EOF (Ctrl+D) */
 if (nread == -1)
 {
 if (interactive)
@@ -58,16 +57,20 @@ break;
 
 line_number++;
 
-/* strip newline */
 if (nread > 0 && line[nread - 1] == '\n')
 line[nread - 1] = '\0';
 
-/* tokenize into argv */
 argc = build_args(line, args);
 
-/* empty / spaces-only line */
 if (argc == 0)
 continue;
+
+/* BULT-IN: exit */
+if (strcmp(args[0], "exit") == 0)
+{
+    free(line);
+    exit(last_status);
+}
 
 last_status = execute_command(args, name, line_number);
 }
