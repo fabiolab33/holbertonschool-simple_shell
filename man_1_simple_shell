@@ -1,31 +1,65 @@
-.TH SIMPLE_SHELL 1 "Simple Shell" "Holberton School"
+.TH SIMPLE_SHELL 1 "January 2026" "Holberton School" "User Commands"
 .SH NAME
 simple_shell \- a simple UNIX command line interpreter
 .SH SYNOPSIS
-.B simple_shell
+.B hsh
 .SH DESCRIPTION
-Simple Shell is a basic UNIX command line interpreter written in C.
-It displays a prompt, waits for the user to enter a command, and executes
-the command using the execve system call.
+Simple Shell is a basic UNIX command line interpreter written in C as part
+of the Holberton School curriculum.
 
-The shell works in both interactive and non-interactive modes and handles
-errors when commands cannot be executed.
+It displays a prompt, waits for the user to enter commands, and executes
+them using system calls such as fork, execve, and wait.
 
+The shell works in both interactive and non-interactive modes and supports
+command execution using absolute paths or by searching the PATH environment
+variable.
 .SH FEATURES
-- Displays a prompt and waits for user input
-- Executes commands with arguments
-- Handles end of file (Ctrl+D)
-- Works in interactive and non-interactive modes
-- Error handling for invalid commands
-
+.TP
+\fBInteractive mode\fR
+Displays a prompt and waits for user input.
+.TP
+\fBNon-interactive mode\fR
+Reads commands from standard input.
+.TP
+\fBPATH handling\fR
+Searches executable files in directories listed in the PATH environment variable.
+.TP
+\fBArguments\fR
+Handles commands with arguments.
+.TP
+\fBBuilt-ins\fR
+Supports the built-in commands:
+.RS
+.IP \fBexit\fR
+Exits the shell.
+.IP \fBenv\fR
+Prints the current environment.
+.RE
+.TP
+\fBError handling\fR
+Prints error messages when commands are not found.
 .SH USAGE
 Interactive mode:
 .PP
-./shell
+.EX
+$ ./hsh
+($) ls -l
+($) exit
+.EE
 .PP
 Non-interactive mode:
 .PP
-echo "/bin/ls" | ./shell
-
+.EX
+$ echo "ls" | ./hsh
+.EE
+.SH ENVIRONMENT
+The shell uses the following environment variables:
+.TP
+\fBPATH\fR
+Directories where executable programs are located.
+.SH RETURN VALUE
+Returns the exit status of the last executed command.
+.SH SEE ALSO
+sh(1), execve(2), fork(2), wait(2)
 .SH AUTHORS
 Alexander Roman & Fabiola Burgos
