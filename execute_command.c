@@ -6,6 +6,47 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+/**
+ * print_error - print error message to stderr
+ * @name: program name
+ * @line_number: line number
+ * @cmd: command that failed
+ *
+ * Return: void
+ */
+void print_error(char *name, unsigned int line_number, char *cmd)
+{
+char *msg1 = ": ";
+char *msg2 = ": not found\n";
+char num_str[20];
+int i, len, temp;
+
+write(STDERR_FILENO, name, strlen(name));
+write(STDERR_FILENO, msg1, 2);
+temp = line_number;
+len = 0;
+if (temp == 0)
+len = 1;
+else
+{
+while (temp > 0)
+{
+temp /= 10;
+len++;
+}
+}
+temp = line_number;
+for (i = len - 1; i >= 0; i--)
+{
+num_str[i] = (temp % 10) + '0';
+temp /= 10;
+}
+num_str[len] = '\0';
+write(STDERR_FILENO, num_str, len);
+write(STDERR_FILENO, msg1, 2);
+write(STDERR_FILENO, cmd, strlen(cmd));
+write(STDERR_FILENO, msg2, 12);
+}
 
 /**
  * _getenv - get environment variable value without using getenv
@@ -30,6 +71,7 @@ i++;
 }
 return (NULL);
 }
+
 /**
  * get_full_path - search PATH efor executable
  * @cmd: Command name
@@ -61,7 +103,7 @@ while (dir)
 snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
 if (access(full_path, X_OK) == 0)
 {
- free(path_copy);
+free(path_copy);
 return (full_path);
 }
 dir = strtok(NULL, ":");
@@ -90,8 +132,7 @@ return 0;
 cmd_path = get_full_path(args[0]);
 if (!cmd_path)
 {
-dprintf(STDERR_FILENO, "%s: %u: %s: not found\n",
-name, line_number, args[0]);
+print_error(name, line_number, args[0]);
 return (127);
 }
 
@@ -105,8 +146,7 @@ else if (pid == 0) /* child */
 {
 if (execve(cmd_path, args, environ) == -1)
 {
-dprintf(STDERR_FILENO, "%s: %u: %s: not found\n",
-name, line_number, cmd_path);
+print_error(name, line_number, cmd_path);
 _exit(127);
 }
 }
