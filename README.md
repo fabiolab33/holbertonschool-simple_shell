@@ -26,11 +26,43 @@ The shell displays a prompt, waits for the user to enter a command, and executes
 | `man_1_simple_shell` | Manual page for the shell               |
 | `AUTHORS`            | List of project contributors            |
 
+### Usage
+The shell works correctly in both interactive and non-interactive modes:
+
+Interactive Mode
+
+`$ ./hsh`
+ 
+ `($) ls -l`
+ 
+ `($) env`
+ 
+ `($) exit`
+
+ `($) /bin/ls`
+
+Non-Interactive Mode
+
+`$ echo "ls" | ./hsh`
+
+`$ cat file_with_commands | ./hsh`
+ 
+`$ echo "/bin/ls" | ./hsh`
+
+### Error Handling
+Errors are printed exactly like `/bin/sh`, except that the program name matches `argv[0]`.
+
+### Built-in Commands
+| Command                 | Description                             |
+| -------------------- | --------------------------------------- |
+| `exit`             | Exits the shell and returns the last command status                |
+| `env`            | Prints all environment variables |
+
+### Manual Page
+To view the manual page:
+
+`man ./man_1_simple_shell`
+
 ### Compilation
 ```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
-
-Authors
-* Alexander Roman
-* Fabiola Burgos
-Horlberton School - 2026
